@@ -51,36 +51,43 @@ llm = ChatOpenAI(
 
 def agent_node(state: AgentState):
     system_prompt = SystemMessage(content=
-        '''Ты AI ассистент техподдержки отвечающий за обработку сообщений от пользователей.
-            У тебя в подчинение есть несколько других агентов со следующими возможностями:
-                document_agent: Поиск по текстовой базе данных для ответа на вопросы о работе компании, обслуживании клиентов и тому подобные.
-                tools_agent: Поиск информации в базе данных по клиентам, заказах, доставках. Имеет возможность изменять статус заказов и доставок. Так же обрабатывает отмены. Не вызывай его более одного раза с одиннаковыми параметрами. 
-                            Доступные модели в базе данных 
-                                users - возвращает id, активные заказы пользователя и уровень скидочной карты, 
-                                products - возвращает id и цену, 
-                                orders - возвращает id заказа и срок его доставки              
-                finale: ответить пользователю
-            Они все вернуться к тебе с ответами.
-            Твоя основная задача - вернуть ответ пользователю отвечать на сообщения клиентов, для этого ты можешь вызывать агентов и инструменты когда необходимо.
-          
-            Ты можешь отвечать ТОЛЬКО в правильном JSON формате, без вступлений, заключений и любого другого текста. В ответе ДОЛЖНЫ содержаться поля "next_step", "content"
-           Пример твоего ответа
-          {
-            "next_step": "имя агента которому ты передаешь управление, или finale если ответ готов",
-            "content": "Запрос к агенту, или ответ пользователю"
-          }
-
-          Когда ты захочешь вернуть ответ пользователю или что либо уточнить необходимо указать 
-          "next_step": "finale", "content": "сообщение которое отправить пользователю"
-          
+        '''
+            Ты самостоятельный AI ассистент технической поддержки в компании ритейлинга. Твоя главная задача - помочь обратившемся клиентам разобраться в их вопросе.
+            Общайся грамотно, учтиво, вежливо, но не стандартизируй ответы, пользователи должны понимать ответы.
+           У тебя есть несколько функций, которые ты можешь вызывать через function calling, tool_calls для обработки данных:
+                1. Доступ к внутренней базе данных с информацией о клиентах, товарах, заказах.
+                    Ты можешь получать данные из этих таблиц, а так же изменять их:
+                        - users - возвращает id, активные заказы и процент скидки пользователя.
+                        - products - возвращает id и цену (за единицу) товара
+                        - orders - возвращает id и срок доставки заказа
+        
+            Помимо функций у тебя в подчинении есть AI ассистент - rag для поиска правил компании, как офлайн так и онлайн, используй его если пользователя интересует общая информация о работе компании. 
+            
+            У тебя есть возможность переспрашивать клиента, если у тебя недостаточно данных для решения вопроса.
+        
+            Твой ответ на любое сообщение должен быть в виде правильной JSON структуры, без вступлений, без outro, без любого дополнительного текста, без разметки markdown 
+            JSON структура имеет 2 обязательных поля - next_agent, content
+        
+            значения которые может принимать поле next_agent
+                rag - вызов аи ассистента для поиска по документации компании 
+                finale - отправить сообщение content пользователю
+        
+            next_agent может быть НЕ finale только в одном случае - если у тебя есть все данные, чтобы сформулировать content как готовую команду/запрос для агента. Если твой content - это вопрос, адресованный пользователю, next_agent ВСЕГДА должен быть finale 
+            
+            пример твоего ответа 
+            {
+              "next_agent": "имя агента которому ты передаешь управление, или finale если ответ готов",
+              "content": "Запрос к агенту, или ответ пользователю"
+            }
         ''')
     response = llm.invoke([system_prompt] + state.messages)
-    
-    # json_response = json.loads(response.content) # pyright: ignore[reportArgumentType]
-    # print(json_response)
-    return {
-        'messages': response
-    }
+    print(response)
+    result = {'message': response}
+    if response.content:
+        json_response = json.loads(response.content) # pyright: ignore[reportArgumentType]
+        print(json_response)
+        result['current_agent'] = json_response.next_step
+    return result
 
 def rag_node(state: AgentState):
     return {'messages': ['hello rag']}
@@ -92,17 +99,17 @@ def decide_route(state: AgentState) -> str:
 
     last_message = state.messages[-1]
 
-    if last_message.tool_calls:
+    if last_message.tool_calls: # pyright: ignore[reportAttributeAccessIssue]
         return 'tools'
-    return 'end'
-    # match state.current_agent:
-    #     case 'document_agent':
-    #         return 'rag'
-    #     case 'finale':
-    #         return 'end'
-    #     case _:
-    #         return 'agent'
 
+    match state.current_agent:
+        case 'document_agent':
+            return 'rag'
+        case 'finale':
+            return 'end'
+
+    return 'end'
+    
 graph = StateGraph(AgentState)
 graph.add_node('agent', action=agent_node)
 graph.add_node('rag', action=rag_node)
@@ -128,6 +135,6 @@ graph.add_edge('tools', 'agent')
 
 app = graph.compile()
 
-init_state = AgentState(messages=[HumanMessage(content='сколько стоит товар №43')])
+init_state = AgentState(messages=[HumanMessage(content='до скольки открыт пункт выдачи?')])
 
 print(app.invoke(init_state))
