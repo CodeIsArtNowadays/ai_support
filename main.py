@@ -23,7 +23,7 @@ class AgentState(BaseModel):
 # tools db 
 # human 
 @tool
-def get_from_db(model: 'str', id: int):
+def get_from_db(model: str, id: int):
     '''Search in DB to get information
         Args:
             model: str - What data to retrieve

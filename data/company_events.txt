@@ -1,0 +1,14 @@
+Company: BrightPath Solutions
+
+Founded: April 12, 2018
+Headquarters: Austin, Texas
+
+Key events:
+- 2019: Launched first product, TaskFlow.
+- 2020: Reached 10,000 active users.
+- 2021: Opened second office in Berlin.
+- 2022: Raised $15 million in Series A funding.
+- 2023: Acquired competitor startup, QuickNotes.
+- 2024: Reached 500,000 active users.
+- January 2025: CEO Sarah Kim stepped down; replaced by former CTO David Park.
+- November 2025: Launched TaskFlow 2.0 with AI-powered scheduling.

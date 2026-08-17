@@ -1,0 +1,42 @@
+1. Who is the author of the Bitcoin whitepaper?
+2. What problem does Bitcoin aim to solve according to the abstract?
+3. What is a Merkle tree used for in the Bitcoin system?
+4. How does the network verify the chronological order of transactions?
+5. What is the term used for the process of finding a valid proof-of-work?
+6. What happens if an attacker tries to change a past block?
+7. How does Bitcoin solve the double-spending problem without a trusted third party?
+8. What role do nodes play in verifying transactions?
+9. How is transaction privacy maintained in Bitcoin according to the paper?
+10. What is the incentive for nodes to support the network?
+11. What happens to the block reward over time, according to the paper?
+12. How does the paper define an "electronic coin"?
+13. What is the purpose of timestamping in the network?
+14. Compare the roles of proof-of-work and public key cryptography in securing the network.
+15. If an attacker controls more than 50% of network's computing power, what could happen according to the paper?
+16. Why does the paper argue that transactions should be irreversible?
+17. What happens to disk space usage as the blockchain grows, and how does the paper propose solving this?
+18. What is the maximum supply of Bitcoin mentioned in the paper?
+19. Does the paper mention smart contracts?
+20. Summarize in one paragraph how a new transaction is broadcast and confirmed across the network.
+
+
+1. What is Eraami's score?
+2. How much RAM does the NovaBook Pro 16 have?
+3. How many basil leaves does the pizza recipe require?
+4. When was BrightPath Solutions founded?
+5. What did Tomas notice on the winter night?
+6. Who has the highest score among the students?
+7. Which laptop has more storage, the X14 or the Pro 16?
+8. What is the average score of Janae, Taya, and Diego?
+9. How many students got grade A?
+10. Which laptop is heavier and by how much?
+11. If someone needs a GPU for gaming, which laptop should they buy and why?
+12. Based on the story, why did the sailboat's connection to Tomas matter emotionally?
+13. What happened to BrightPath's leadership the same year AI features were being planned?
+14. How many years after the storm did Tomas rescue his brother's grandson?
+15. What is Marcus Webb's score in mathematics specifically?
+16. Who is the current CFO of BrightPath Solutions?
+17. What brand of olive oil is used in the pizza recipe?
+18. What color was the sailboat in the story?
+19. Which employee's grade was the lowest?
+20. Tell me about the moment the lighthouse keeper realized something was wrong.
