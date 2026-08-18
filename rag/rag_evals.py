@@ -55,14 +55,5 @@ def retrieval_metrics():
     # LLAMAINDEX
     print(asyncio.run(get_metrics_via_evaluator(index, dataset)))
 
-def get_context_and_answer(query):
-    pass
-
-def generation_metrics():
-    pass
-    
-    # query - context - answer
-    
-
 if __name__ == '__main__':
     retrieval_metrics()

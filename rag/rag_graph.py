@@ -2,7 +2,7 @@ from pathlib import Path
 
 from chromadb import PersistentClient
 
-from llama_index.core import VectorStoreIndex, StorageContext
+from llama_index.core import VectorStoreIndex, StorageContext, load_index_from_storage
 from llama_index.core.ingestion import IngestionPipeline, DocstoreStrategy
 from llama_index.core.readers import SimpleDirectoryReader
 from llama_index.vector_stores.chroma import ChromaVectorStore
@@ -52,7 +52,7 @@ def init_index() -> VectorStoreIndex:
     return VectorStoreIndex.from_vector_store(
         vector_store=storage_context.vector_store,
         storage_context=storage_context
-    )
+    ) 
 
 def add_file(file_path: str) -> VectorStoreIndex:
     storage_context = load_storage_context()
@@ -64,11 +64,11 @@ def add_file(file_path: str) -> VectorStoreIndex:
         storage_context=storage_context
     )
 
-def build_query_engine():
-    index = init_index()
-    return index.as_query_engine(similarity_top_k=5)
+def get_index():
+    return init_index()
 
 
 if __name__ == '__main__':
-    query_engine = build_query_engine()
-    print(query_engine.query('If someone needs a GPU for gaming, which laptop should they buy and why?'))
+    index = get_index()
+    query_engine = index.as_query_engine(similarity_top_k=5)
+    response = query_engine.query('If someone needs a GPU for gaming, which laptop should they buy and why?')
