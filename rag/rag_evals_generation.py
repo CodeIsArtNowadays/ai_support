@@ -1,21 +1,22 @@
 import json
+
 from llama_index.core import VectorStoreIndex
 
-from rag.rag_settings import Settings
 from rag.rag_graph import get_index
+from rag.rag_settings import Settings
 
 
 def generate_golden_dataset(nodes):
     golden_dataset = [] 
-    for node in nodes[:5]:
+    for node in nodes:
         prompt = f'Generate a question that would be answered by this text \n TEXT \n {node.get_content()} \n Response only with 1 question, without any additional text and markdown.'
         question = Settings.llm.complete(prompt)
         golden_dataset.append(question.text)
     return golden_dataset
 
 
-def geneva(index: VectorStoreIndex):
-    nodes = index.vector_store.get_nodes(node_ids=None)
+def geneva(nodes, index):
+    
     query_engine = index.as_query_engine()
     golden_dataset = generate_golden_dataset(nodes)
     
@@ -49,7 +50,6 @@ def geneva(index: VectorStoreIndex):
         except json.JSONDecodeError:
             print(f"⚠️ Failed to parse JSON for question: {question}")
             print(f"Raw output: {raw_response}")
-        print(statements)
         context = '\n'.join([n.text for n in response.source_nodes])
         for statement in statements:
             faithfulness_prompt = f'''
@@ -71,4 +71,5 @@ def geneva(index: VectorStoreIndex):
 if __name__ == '__main__':
     
     index = get_index()
-    print(geneva(index))
+    nodes = index.vector_store.get_nodes(node_ids=None)[:5]
+    print(geneva(nodes, index))
