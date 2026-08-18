@@ -17,7 +17,7 @@ def generate_golden_dataset(nodes):
         golden_dataset.append({'node_id': node.node_id, 'question': question.text})
     return golden_dataset
 
-def retrieval_metrics(index, dataset):
+def get_metrics_manual(index, dataset):
     retriever = index.as_retriever(similarity_top_k=3)
     hr = 0
     mrr = 0
@@ -29,7 +29,7 @@ def retrieval_metrics(index, dataset):
                 mrr += 1 / (i+1)
     return (hr / len(dataset), mrr / len(dataset))
 
-async def retrieval_metrics_with_evaluator(index, dataset):
+async def get_metrics_via_evaluator(index, dataset):
     retriever = index.as_retriever(similarity_top_k=3)
     evaluator = RetrieverEvaluator.from_metric_names(
         ['hit_rate', 'mrr'], retriever=retriever
@@ -44,16 +44,25 @@ async def retrieval_metrics_with_evaluator(index, dataset):
     return (hr / len(dataset), mrr / len(dataset))
 
 
-def metrics():
+def retrieval_metrics():
     nodes = chunk_splitter(documents)
     dataset = generate_golden_dataset(nodes)
     index = VectorStoreIndex(nodes=nodes)
 
     # MANUAL
-    print(retrieval_metrics(index, dataset))
+    print(get_metrics_manual(index, dataset))
 
     # LLAMAINDEX
-    print(asyncio.run(retrieval_metrics_with_evaluator(index, dataset)))
+    print(asyncio.run(get_metrics_via_evaluator(index, dataset)))
+
+def get_context_and_answer(query):
+    pass
+
+def generation_metrics():
+    pass
+    
+    # query - context - answer
+    
 
 if __name__ == '__main__':
-    metrics()
+    retrieval_metrics()
