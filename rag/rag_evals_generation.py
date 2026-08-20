@@ -1,7 +1,5 @@
 import json
 
-from llama_index.core import VectorStoreIndex
-
 from rag.rag_graph import get_index
 from rag.rag_settings import Settings
 
